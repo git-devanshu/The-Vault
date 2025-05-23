@@ -12,6 +12,7 @@ export default function AddPasswordPopup({setShowPopup, refresh, setRefresh, lab
         password : '',
         label : ''
     });
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleChange = (e) =>{
         const {name, value} = e.target;
@@ -31,6 +32,7 @@ export default function AddPasswordPopup({setShowPopup, refresh, setRefresh, lab
         const token = getAuthToken();
         const securityPin = getSecurityPin();
         const toastId = toast.loading('Adding Password...');
+        setIsLoading(true);
 
         axios.post(getBaseURL() + '/password', data, {headers: {
                 Authorization: `Bearer ${token}`,
@@ -43,10 +45,12 @@ export default function AddPasswordPopup({setShowPopup, refresh, setRefresh, lab
                 setShowPopup(false);
                 setRefresh(!refresh);
             }
+            setIsLoading(false);
         })
         .catch(err => {
             console.log(err);
             toast.error(err.response.data.message, {id : toastId});
+            setIsLoading(false);
         });
     }
 
@@ -75,7 +79,7 @@ export default function AddPasswordPopup({setShowPopup, refresh, setRefresh, lab
                     ))}
                 </select>
 
-                <Button onClick={addPassword}>Add Password</Button>
+                <Button disabled={isLoading} onClick={addPassword}>Add Password</Button>
             </div>
         </div>
     )

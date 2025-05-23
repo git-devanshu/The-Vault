@@ -11,6 +11,7 @@ export default function SecurityPin() {
 
     const [securityPin, setSecurityPin] = useState('');
     const [password, setPassword] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const resetSecurityPin = (e) =>{
         e.preventDefault();
@@ -22,6 +23,7 @@ export default function SecurityPin() {
             return;
         }
         const toastId = toast.loading('Loading...');
+        setIsLoading(true);
         const token = getAuthToken();
         axios.post(getBaseURL()+'/auth/reset-security-pin', {securityPin, password}, {headers : {
             Authorization : `Bearer ${token}`
@@ -36,10 +38,12 @@ export default function SecurityPin() {
             else{
                 toast.error(res.data.message, {id :toastId});
             }
+            setIsLoading(false);
         })
         .catch(err =>{
             console.log(err);
             toast.error(err.response.data.message, {id :toastId});
+            setIsLoading(false);
         });
     }
 
@@ -69,7 +73,7 @@ export default function SecurityPin() {
                             </PinInput>
                         </HStack>
                     </div>
-                    <button type="submit" onClick={resetSecurityPin} className="login-button">
+                    <button disabled={isLoading} type="submit" onClick={resetSecurityPin} className="login-button">
                         Confirm
                     </button>
                 </form>

@@ -17,14 +17,19 @@ import UpdatePasswordPopup from '../components/UpdatePasswordPopup';
 
 export default function PasswordVault() {
     const [securityPin, setSecurityPin] = useState(getSecurityPin());
+
     const [labels, setLabels] = useState();
     const [data, setData] = useState();
+
     const [error, setError] = useState();
     const [refresh, setRefresh] = useState(false);
+
     const [labelToBeRemoved, setLabelToBeRemoved] = useState('');
     const [passwordId, setPasswordId] = useState('');
     const [passwordData, setPasswordData] = useState({});
+
     const [isSortedAsc, setIsSortedAsc] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
     const [showAddLabelPopup, setShowAddLabelPopup] = useState(false);
     const [showRemoveLabelPopup, setShowRemoveLabelPopup] = useState(false);
@@ -62,6 +67,7 @@ export default function PasswordVault() {
         const token = getAuthToken();
         const securityPin = getSecurityPin();
         const toastId = toast.loading('Removing Label...');
+        setIsLoading(true);
 
         axios.delete(getBaseURL() + `/password/label/${labelName}`, {headers : {
             Authorization : `Bearer ${token}`,
@@ -73,10 +79,12 @@ export default function PasswordVault() {
                 setRefresh(!refresh);
                 setShowRemoveLabelPopup(false);
             }
+            setIsLoading(false);
         })
         .catch(err =>{
             console.log(err);
             toast.error(err.response.data.message, {id : toastId});
+            setIsLoading(false);
         });
     }
 
@@ -87,6 +95,7 @@ export default function PasswordVault() {
         const token = getAuthToken();
         const securityPin = getSecurityPin();
         const toastId = toast.loading('Removing Password...');
+        setIsLoading(true);
 
         axios.delete(getBaseURL() + `/password/${passwordId}`, {headers : {
             Authorization : `Bearer ${token}`,
@@ -98,10 +107,12 @@ export default function PasswordVault() {
                 setRefresh(!refresh);
                 setShowRemovePasswordPopup(false);
             }
+            setIsLoading(false);
         })
         .catch(err =>{
             console.log(err);
             toast.error(err.response.data.message, {id : toastId});
+            setIsLoading(false);
         });
     }
 
@@ -188,12 +199,12 @@ export default function PasswordVault() {
 
             {/* Label Popups */}
             {showAddLabelPopup && <AddLabelPopup setShowPopup={setShowAddLabelPopup} setRefresh={setRefresh} refresh={refresh}/>}
-            {showRemoveLabelPopup && <ConfirmationPopup confirmButtonName='Delete' confirmMsg='Do you want to delete this label, your passwords will not be removed?' setShowPopup={setShowRemoveLabelPopup} confirmAction={removeLabel} actionParams={labelToBeRemoved}/>}
+            {showRemoveLabelPopup && <ConfirmationPopup confirmButtonName='Delete' confirmMsg='Do you want to delete this label, your passwords will not be removed?' setShowPopup={setShowRemoveLabelPopup} confirmAction={removeLabel} actionParams={labelToBeRemoved} isLoading={isLoading}/>}
 
             {/* Password Popups */}
             {showAddPasswordPopup && <AddPasswordPopup refresh={refresh} setRefresh={setRefresh} setShowPopup={setShowAddPasswordPopup} labels={labels}/>}
             {showRevealPasswordPopup && <RevealPasswordPopup setShowPopup={setShowRevealPasswordPopup} passwordId={passwordId}/>}
-            {showRemovePasswordPopup && <ConfirmationPopup confirmButtonName='Delete' confirmMsg='Do you want to delete this password and credentials?' setShowPopup={setShowRemovePasswordPopup} confirmAction={removePassword} actionParams={passwordId}/>}
+            {showRemovePasswordPopup && <ConfirmationPopup confirmButtonName='Delete' confirmMsg='Do you want to delete this password and credentials?' setShowPopup={setShowRemovePasswordPopup} confirmAction={removePassword} actionParams={passwordId} isLoading={isLoading}/>}
             {showUpdatePasswordPopup && <UpdatePasswordPopup refresh={refresh} setRefresh={setRefresh} setShowPopup={setShowUpdatePasswordPopup} labels={labels} passwordData={passwordData}/>}
         </div>
     );

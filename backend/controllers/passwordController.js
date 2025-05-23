@@ -126,7 +126,7 @@ const removePassword = async(req, res) =>{
 
         user.passwordList = user.passwordList.filter(passId => passId !== id);
         await user.save();
-        res.status(200).json({message : 'Password saved'});
+        res.status(200).json({message : 'Password deleted'});
     }
     catch(error){
         res.status(500).json({ message : "Something went wrong!" });

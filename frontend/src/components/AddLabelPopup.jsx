@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 
 export default function AddLabelPopup({setShowPopup, setRefresh, refresh}) {
     const [label, setLabel] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const createLabel = (e) =>{
         e.preventDefault();
@@ -18,6 +19,7 @@ export default function AddLabelPopup({setShowPopup, setRefresh, refresh}) {
         const token = getAuthToken();
         const securityPin = getSecurityPin();
         const toastId = toast.loading('Creating Label...');
+        setIsLoading(true);
 
         axios.post(getBaseURL() + '/password/label', {label}, {headers : {
             Authorization : `Bearer ${token}`,
@@ -30,10 +32,12 @@ export default function AddLabelPopup({setShowPopup, setRefresh, refresh}) {
                 setShowPopup(false);
                 setRefresh(!refresh)
             }
+            setIsLoading(false);
         })
         .catch(err =>{
             console.log(err);
             toast.error(err.response.data.message, {id : toastId});
+            setIsLoading(false);
         })
     }
 
@@ -49,7 +53,7 @@ export default function AddLabelPopup({setShowPopup, setRefresh, refresh}) {
                 <label className="login-label">Label Name</label>
                 <input type="text" name='labelName' value={label} onChange={(e)=>setLabel(e.target.value)} required className="login-input" />
 
-                <Button onClick={createLabel}>Create Label</Button>
+                <Button disabled={isLoading} onClick={createLabel}>Create Label</Button>
             </div>
         </div>
     )

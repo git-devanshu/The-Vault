@@ -10,6 +10,7 @@ export default function PinModal() {
     const navigate = useNavigate();
 
     const [securityPin, setSecurityPin] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const navigateToHome = () =>{
         navigate('/');
@@ -21,6 +22,7 @@ export default function PinModal() {
             return;
         }
         const toastId = toast.loading('Loading...');
+        setIsLoading(true);
         const token = getAuthToken();
         axios.post(getBaseURL() + '/auth/check-security-pin', {securityPin}, {headers : {
             Authorization : `Bearer ${token}`
@@ -33,10 +35,12 @@ export default function PinModal() {
                     window.location.reload();
                 }, 1000);
             }
+            setIsLoading(false);
         })
         .catch(err =>{
             console.log(err);
             toast.error(err.response.data.message, {id : toastId});
+            setIsLoading(false);
         });
     }
 
@@ -62,7 +66,7 @@ export default function PinModal() {
                     Forgot Security Pin?
                 </a>
                 <HStack spacing={3} style={{margin: '0 auto'}}>
-                    <button onClick={checkSecurityPin} className="login-button">
+                    <button disabled={isLoading} onClick={checkSecurityPin} className="login-button">
                         Confirm
                     </button>
                     <button onClick={navigateToHome} className="cancel-button">

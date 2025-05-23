@@ -13,6 +13,7 @@ export default function UpdatePasswordPopup({setShowPopup, refresh, setRefresh, 
         password : '',
         label : passwordData.label
     });
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleChange = (e) =>{
         const {name, value} = e.target;
@@ -32,6 +33,7 @@ export default function UpdatePasswordPopup({setShowPopup, refresh, setRefresh, 
         const token = getAuthToken();
         const securityPin = getSecurityPin();
         const toastId = toast.loading('Updating Password...');
+        setIsLoading(true);
 
         axios.put(getBaseURL() + '/password', data, {headers: {
                 Authorization: `Bearer ${token}`,
@@ -44,10 +46,12 @@ export default function UpdatePasswordPopup({setShowPopup, refresh, setRefresh, 
                 setShowPopup(false);
                 setRefresh(!refresh);
             }
+            setIsLoading(false);
         })
         .catch(err => {
             console.log(err);
             toast.error(err.response.data.message, {id : toastId});
+            setIsLoading(false);
         });
     }
 
@@ -76,7 +80,7 @@ export default function UpdatePasswordPopup({setShowPopup, refresh, setRefresh, 
                     ))}
                 </select>
 
-                <Button onClick={updatePassword}>Update Password</Button>
+                <Button disabled={isLoading} onClick={updatePassword}>Update Password</Button>
             </div>
         </div>
     )

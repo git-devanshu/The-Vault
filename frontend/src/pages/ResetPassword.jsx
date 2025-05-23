@@ -18,6 +18,8 @@ const ResetPassword = () => {
     const [showVerification, setShowVerification] = useState(false); //to show pin input
     const [showResetFields, setShowResetFields] = useState(false); //to show new password field
 
+    const [isLoading, setIsLoading] = useState(false);
+
     const getQueryParams = (query) =>{
         return query.substring(1).split('&')
             .reduce((params, param) =>{
@@ -48,6 +50,7 @@ const ResetPassword = () => {
             return;
         }
         const toastId = toast.loading('Verifying email...');
+        setIsLoading(true);
         axios.post(getBaseURL() + '/auth/get-vfcode', {email})
         .then(res => {
             if(res.status === 200){
@@ -56,10 +59,12 @@ const ResetPassword = () => {
                     navigate(`/reset-password?code=true&email=${email}`);
                 }, 300);
             }
+            setIsLoading(false);
         })
         .catch(err =>{
             console.log(err);
             toast.error(err.response.data.message, {id :toastId});
+            setIsLoading(false);
         });
     }
 
@@ -73,6 +78,7 @@ const ResetPassword = () => {
             return;
         }
         const toastId = toast.loading('Verifying Code...');
+        setIsLoading(true);
         axios.post(getBaseURL() + '/auth/verify-vfcode', {vfcode, email})
         .then(res =>{
             if(res.status === 200){
@@ -81,10 +87,12 @@ const ResetPassword = () => {
                     navigate(`/reset-password?new_password=true&email=${email}&vfcode=${vfcode}`);
                 }, 300);
             }
+            setIsLoading(false);
         })
         .catch(err =>{
             console.log(err);
             toast.error(err.response.data.message, {id :toastId});
+            setIsLoading(false);
         });
     }
 
@@ -98,6 +106,7 @@ const ResetPassword = () => {
             return;
         }
         const toastId = toast.loading('Loading...');
+        setIsLoading(true);
         axios.post(getBaseURL() + '/auth/reset-password', {newPassword, email, vfcode})
         .then(res =>{
             if(res.status === 200){
@@ -106,10 +115,12 @@ const ResetPassword = () => {
                     navigate('/')
                 }, 1000);
             }
+            setIsLoading(false);
         })
         .catch(err =>{
             console.log(err);
             toast.error(err.response.data.message, {id :toastId});
+            setIsLoading(false);
         });
     }
 
@@ -126,7 +137,7 @@ const ResetPassword = () => {
                         <label className="login-label">Email</label>
                         <input type="email" name='email' value={email} onChange={(e)=> setEmail(e.target.value)} required className="login-input" />
                         
-                        <button type="submit" onClick={verifyUser} className="login-button">
+                        <button disabled={isLoading} type="submit" onClick={verifyUser} className="login-button">
                             Send Verification Code
                         </button>
                     </form>) : !showResetFields ? (
@@ -149,7 +160,7 @@ const ResetPassword = () => {
                             </HStack>
                         </div>
 
-                        <button type="submit" onClick={verifyCode} className="login-button">
+                        <button disabled={isLoading} type="submit" onClick={verifyCode} className="login-button">
                             Verify
                         </button>
                     </form>) : (
@@ -164,7 +175,7 @@ const ResetPassword = () => {
                         <label className="login-label">Retype New Password</label>
                         <input type="password" name='password' value={confirmPassword} onChange={(e)=> setConfirmPassword(e.target.value)} required minLength={8} maxLength={30} className="login-input" />
                         
-                        <button type="submit" onClick={resetPassword} className="login-button">
+                        <button disabled={isLoading} type="submit" onClick={resetPassword} className="login-button">
                             Reset Password
                         </button>
                     </form>)

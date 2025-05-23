@@ -12,6 +12,7 @@ const Login = () => {
         email : '',
         password : ''
     });
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleChange = (e) =>{
         const {name, value} = e.target;
@@ -27,6 +28,7 @@ const Login = () => {
             return;
         }
         const toastId = toast.loading('Loading...');
+        setIsLoading(true);
         axios.post(getBaseURL() + '/auth/login', user)
         .then(res =>{
             if(res.status === 200){
@@ -36,10 +38,12 @@ const Login = () => {
                     navigate('/');
                 }, 1500);
             }
+            setIsLoading(false);
         })
         .catch(err =>{
             console.log(err);
             toast.error(err.response.data.message, {id : toastId});
+            setIsLoading(false);
         });
     }
 
@@ -59,7 +63,7 @@ const Login = () => {
                         Forgot Password?
                     </a>
 
-                    <button type="submit" onClick={loginUser} className="login-button">
+                    <button disabled={isLoading} type="submit" onClick={loginUser} className="login-button">
                         Login
                     </button>
                 </form>

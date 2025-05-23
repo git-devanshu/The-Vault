@@ -76,6 +76,11 @@
     background-color: #0088e3;
 }
 
+.login-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
 .signup-text {
     margin-top: 15px;
     font-size: 16px;

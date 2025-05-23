@@ -16,6 +16,7 @@ const Signup = () => {
         password : '',
         securityPin : ''
     });
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleChange = (e) =>{
         const {name, value} = e.target;
@@ -39,6 +40,7 @@ const Signup = () => {
             return;
         }
         const toastId = toast.loading('Loading...');
+        setIsLoading(true);
         axios.post(getBaseURL() + '/auth/signup', user)
         .then(res =>{
             if(res.status === 201){
@@ -47,10 +49,12 @@ const Signup = () => {
                     navigate('/login');
                 }, 1500);
             }
+            setIsLoading(false);
         })
         .catch(err =>{
             console.log(err);
             toast.error(err.response.data.message, {id : toastId});
+            setIsLoading(false);
         });
     }
 
@@ -95,7 +99,7 @@ const Signup = () => {
                             </HStack>
                         </div>
 
-                        <button type="submit" onClick={registerUser} className="login-button">
+                        <button disabled={isLoading} type="submit" onClick={registerUser} className="login-button">
                             Signup
                         </button>
                     </form>

@@ -3,6 +3,7 @@
     font-family: "Arial", sans-serif;
     background-color: var(--dark);
     margin: 0;
+    height: auto;
     min-height: 100vh;
     padding: 20px;
 }

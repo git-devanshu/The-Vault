@@ -1,8 +1,8 @@
 .popup-container{
-    position: absolute;
+    position: fixed;
     top: 100px;
-    left: calc((100% - 360px)/2);
-    width: 360px;
+    left: calc((100% - 340px)/2);
+    width: 340px;
     height: auto;
     padding: 15px;
     border-radius: 10px;
