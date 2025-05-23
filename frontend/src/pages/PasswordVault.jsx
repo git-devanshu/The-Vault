@@ -1,0 +1,200 @@
+import React, { useEffect, useState } from 'react'
+import {getAuthToken, getBaseURL, getSecurityPin, removeSecurityPin} from '../utils/helperFunctions';
+import '../styles/Vault.css';
+import PinModal from '../components/PinModal';
+import Loading from '../components/Loading';
+import { fetchSecureData } from '../axios/axiosRequest';
+import toast from 'react-hot-toast';
+import { Badge, Button, ButtonGroup, Heading, IconButton, Text } from '@chakra-ui/react';
+import {PlusSquareIcon, DeleteIcon, EditIcon, ViewIcon} from '@chakra-ui/icons';
+import { FaSortAlphaDown } from 'react-icons/fa';
+import AddLabelPopup from '../components/AddLabelPopup';
+import ConfirmationPopup from '../components/ConfirmationPopup';
+import axios from 'axios';
+import AddPasswordPopup from '../components/AddPasswordPopup';
+import RevealPasswordPopup from '../components/RevealPasswordPopup';
+import UpdatePasswordPopup from '../components/UpdatePasswordPopup';
+
+export default function PasswordVault() {
+    const [securityPin, setSecurityPin] = useState(getSecurityPin());
+    const [labels, setLabels] = useState();
+    const [data, setData] = useState();
+    const [error, setError] = useState();
+    const [refresh, setRefresh] = useState(false);
+    const [labelToBeRemoved, setLabelToBeRemoved] = useState('');
+    const [passwordId, setPasswordId] = useState('');
+    const [passwordData, setPasswordData] = useState({});
+    const [isSortedAsc, setIsSortedAsc] = useState(true);
+
+    const [showAddLabelPopup, setShowAddLabelPopup] = useState(false);
+    const [showRemoveLabelPopup, setShowRemoveLabelPopup] = useState(false);
+    const [showAddPasswordPopup, setShowAddPasswordPopup] = useState(false);
+    const [showRevealPasswordPopup, setShowRevealPasswordPopup] = useState(false);
+    const [showRemovePasswordPopup, setShowRemovePasswordPopup] = useState(false);
+    const [showUpdatePasswordPopup, setShowUpdatePasswordPopup] = useState(false);
+
+
+    useEffect(()=>{
+        const handleBeforeUnload = () =>{
+            sessionStorage.setItem('preservePin', 'true');
+        };
+        window.addEventListener('beforeunload', handleBeforeUnload);
+    
+        return ()=>{
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+            const preserve = sessionStorage.getItem('preservePin');
+            if(!preserve){
+                removeSecurityPin();
+            }
+            sessionStorage.removeItem('preservePin');
+        };
+    }, []);
+    
+    useEffect(()=>{
+        fetchSecureData('/password', setData, setError);
+        fetchSecureData('/password/label', setLabels, setError);
+    }, [refresh]);
+
+    const removeLabel = (labelName) =>{
+        if(!labelName || labelName.length === 0){
+            return;
+        }
+        const token = getAuthToken();
+        const securityPin = getSecurityPin();
+        const toastId = toast.loading('Removing Label...');
+
+        axios.delete(getBaseURL() + `/password/label/${labelName}`, {headers : {
+            Authorization : `Bearer ${token}`,
+            'x-securityPin' : securityPin
+        }})
+        .then(res =>{
+            if(res.status === 200){
+                toast.success(res.data.message, {id : toastId});
+                setRefresh(!refresh);
+                setShowRemoveLabelPopup(false);
+            }
+        })
+        .catch(err =>{
+            console.log(err);
+            toast.error(err.response.data.message, {id : toastId});
+        });
+    }
+
+    const removePassword = (passwordId) =>{
+        if(!passwordId || passwordId.length === 0){
+            return;
+        }
+        const token = getAuthToken();
+        const securityPin = getSecurityPin();
+        const toastId = toast.loading('Removing Password...');
+
+        axios.delete(getBaseURL() + `/password/${passwordId}`, {headers : {
+            Authorization : `Bearer ${token}`,
+            'x-securityPin' : securityPin
+        }})
+        .then(res =>{
+            if(res.status === 200){
+                toast.success(res.data.message, {id : toastId});
+                setRefresh(!refresh);
+                setShowRemovePasswordPopup(false);
+            }
+        })
+        .catch(err =>{
+            console.log(err);
+            toast.error(err.response.data.message, {id : toastId});
+        });
+    }
+
+    const handleSort = () => {
+        const sortedData = [...data].sort((a, b) => {
+            const labelA = a.label?.toLowerCase() || '';
+            const labelB = b.label?.toLowerCase() || '';
+            return isSortedAsc ? labelA.localeCompare(labelB) : labelB.localeCompare(labelA);
+        });
+        setData(sortedData);
+        setIsSortedAsc(!isSortedAsc);
+    };    
+
+    
+    if(!securityPin){
+        return <PinModal/>
+    }
+
+    if(!data){
+        return <Loading data='Password Lists' error={error}/>
+    }
+
+    if(!labels){
+        return <Loading data='Labels' error={error}/>
+    }
+
+    return (
+        <div className='vault-container'>
+            <Heading className='vault-heading' color='#2daaff' size='lg'>Password Vault</Heading>
+            <ButtonGroup mt={6}>
+                <Button onClick={()=> setShowAddPasswordPopup(true)} leftIcon={<PlusSquareIcon />}>Password</Button>
+                <Button onClick={()=> setShowAddLabelPopup(true)} variant='outline' color='white' _hover={{bgColor: 'transparent'}} leftIcon={<PlusSquareIcon />}>Label</Button>
+                <IconButton onClick={handleSort} icon={<FaSortAlphaDown/>}></IconButton>
+            </ButtonGroup>
+
+            <div className='vault-grid'>
+                <div className='grid-inner-left'>
+                    <Text fontFamily='revert' fontSize='18px' mb={5} textAlign='center' fontWeight={500}>MY LABELS</Text>
+                    
+                    <div className='label-list-div'>
+                        {labels?.map((item, ind)=>{
+                            return(
+                                <div className='label-item' key={ind}>
+                                    <Text fontSize='18px' color='#aaaaaa'>{item}</Text>
+                                    {ind !== 0 && <IconButton onClick={()=>{setLabelToBeRemoved(item); setShowRemoveLabelPopup(true)}} variant='outline' colorScheme='red' _hover={{bgColor: 'transparent'}} h='34px' icon={<DeleteIcon />}></IconButton>}
+                                </div>
+                            )
+                        })}
+                    </div>
+                </div>
+
+                <div className='grid-inner-right'>
+                    <Text fontFamily='revert' fontSize='18px' mb={5} textAlign='center' fontWeight={500}>MY PASSWORDS</Text>
+                    
+                    {(!data || data.length === 0) && <Text color='#aaa' mt={8} textAlign='center'>You haven't added any passwords yet.</Text>}
+                    
+                    {data?.length > 0 && <div className='password-card-div'>
+                        {data.map((item, ind)=>{
+                            return(
+                                <div className='password-card' key={ind}>
+                                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+                                        <Heading size='md'>{item.platform}</Heading>
+                                        <Badge>{item.label}</Badge>
+                                    </div>
+                                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                                        <Text color='#aaa'>Username</Text>
+                                        <Text color='#aaa'>***********</Text>
+                                    </div>
+                                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                                        <Text color='#aaa'>Password</Text>
+                                        <Text color='#aaa'>***********</Text>
+                                    </div>
+                                    <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '15px'}}>
+                                        <Button onClick={()=> {setPasswordId(item._id); setShowRevealPasswordPopup(true)}} leftIcon={<ViewIcon/>}>View</Button>
+                                        <Button onClick={()=> {setPasswordData(item); setShowUpdatePasswordPopup(true)}} leftIcon={<EditIcon/>}>Edit</Button>
+                                        <Button onClick={()=>{setPasswordId(item._id); setShowRemovePasswordPopup(true)}} colorScheme='red' leftIcon={<DeleteIcon/>}>Delete</Button>
+                                    </div>
+                                </div>
+                            )
+                        })}
+                    </div>}
+                </div>
+            </div>
+
+            {/* Label Popups */}
+            {showAddLabelPopup && <AddLabelPopup setShowPopup={setShowAddLabelPopup} setRefresh={setRefresh} refresh={refresh}/>}
+            {showRemoveLabelPopup && <ConfirmationPopup confirmButtonName='Delete' confirmMsg='Do you want to delete this label, your passwords will not be removed?' setShowPopup={setShowRemoveLabelPopup} confirmAction={removeLabel} actionParams={labelToBeRemoved}/>}
+
+            {/* Password Popups */}
+            {showAddPasswordPopup && <AddPasswordPopup refresh={refresh} setRefresh={setRefresh} setShowPopup={setShowAddPasswordPopup} labels={labels}/>}
+            {showRevealPasswordPopup && <RevealPasswordPopup setShowPopup={setShowRevealPasswordPopup} passwordId={passwordId}/>}
+            {showRemovePasswordPopup && <ConfirmationPopup confirmButtonName='Delete' confirmMsg='Do you want to delete this password and credentials?' setShowPopup={setShowRemovePasswordPopup} confirmAction={removePassword} actionParams={passwordId}/>}
+            {showUpdatePasswordPopup && <UpdatePasswordPopup refresh={refresh} setRefresh={setRefresh} setShowPopup={setShowUpdatePasswordPopup} labels={labels} passwordData={passwordData}/>}
+        </div>
+    );
+}

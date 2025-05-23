@@ -1,0 +1,13 @@
+/* Color Palette */
+:root{
+    --primary : #2daaff;
+    --secondary : orange;
+    --dark : #121826;
+    --dark-2 : #1b2232;
+    --light : #fefefe;
+}
+
+body{
+    margin: 0;
+    padding: 0;
+}
