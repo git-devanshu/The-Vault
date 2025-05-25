@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import '../styles/Home.css';
 import { HiOutlineLockClosed } from 'react-icons/hi';
 import {Avatar, Heading, Text} from '@chakra-ui/react';
 import {ArrowForwardIcon} from '@chakra-ui/icons';
-import { decodeToken, getAuthToken, removeAuthToken } from '../utils/helperFunctions';
+import { decodeToken, getAuthToken, removeAuthToken, removeSecurityPin } from '../utils/helperFunctions';
 import {useNavigate} from 'react-router-dom';
 import ConfirmationPopup from '../components/ConfirmationPopup';
 
@@ -12,6 +12,10 @@ export default function Home() {
     const name = decodeToken(getAuthToken()).name;
 
     const [showLogoutPopup, setShowLogoutPopup] = useState(false);
+
+    useEffect(()=>{
+        removeSecurityPin();
+    }, []);
 
     const navigateToVault = (vaultName) =>{
         navigate(`/vault/${vaultName}`);
