@@ -177,14 +177,6 @@ export default function PasswordVault() {
                                         <Heading size='md'>{item.platform}</Heading>
                                         <Badge>{item.label}</Badge>
                                     </div>
-                                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                                        <Text color='#aaa'>Username</Text>
-                                        <Text color='#aaa'>***********</Text>
-                                    </div>
-                                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                                        <Text color='#aaa'>Password</Text>
-                                        <Text color='#aaa'>***********</Text>
-                                    </div>
                                     <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '15px'}}>
                                         <Button onClick={()=> {setPasswordId(item._id); setShowRevealPasswordPopup(true)}} leftIcon={<ViewIcon/>}>View</Button>
                                         <Button onClick={()=> {setPasswordData(item); setShowUpdatePasswordPopup(true)}} leftIcon={<EditIcon/>}>Edit</Button>
