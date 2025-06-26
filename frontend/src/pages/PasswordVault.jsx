@@ -38,7 +38,7 @@ export default function PasswordVault() {
     const [showRemovePasswordPopup, setShowRemovePasswordPopup] = useState(false);
     const [showUpdatePasswordPopup, setShowUpdatePasswordPopup] = useState(false);
 
-
+    // for removing the security pin after exiting the module
     useEffect(()=>{
         const handleBeforeUnload = () =>{
             sessionStorage.setItem('preservePin', 'true');

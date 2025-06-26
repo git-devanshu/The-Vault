@@ -9,6 +9,7 @@ const {dailyRouter} = require('./routers/dailyRouter');
 const {notesRouter} = require('./routers/notesRouter');
 const {passwordRouter} = require('./routers/passwordRouter');
 const {taskRouter} = require('./routers/taskRouter');
+const {expenseRouter} = require('./routers/expenseRouter');
 
 const app = express();
 
@@ -33,7 +34,7 @@ app.use('/api/daily', dailyRouter);
 app.use('/api/notes', notesRouter);
 app.use('/api/password', passwordRouter);
 app.use('/api/task', taskRouter);
-
+app.use('/api/expense', expenseRouter);
 
 app.listen(process.env.PORT, ()=>{
     console.log('Server is listening on PORT', process.env.PORT);

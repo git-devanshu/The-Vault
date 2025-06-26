@@ -15,6 +15,7 @@ import DailyVault from './pages/DailyVault';
 import NotesVault from './pages/NotesVault';
 import PasswordVault from './pages/PasswordVault';
 import TasklistVault from './pages/TasklistVault';
+import ExpenseVault from './pages/ExpenseVault';
 
 
 export default function App() {
@@ -34,8 +35,8 @@ export default function App() {
                     <Route path='/vault/notes' element={<ProtectedNotesVault/>} />
                     <Route path='/vault/tasklist' element={<ProtectedTasklistVault/>} />
                     <Route path='/vault/daily' element={<ProtectedDailyVault/>} />
+                    <Route path='/vault/expenses' element={<ProtectedExpenseVault/>} />
 
-                    {/* <Route path='/' element={</>} /> */}
                     {/* <Route path='/' element={</>} /> */}
                     {/* <Route path='/' element={</>} /> */}
                     {/* <Route path='/' element={</>} /> */}
@@ -104,6 +105,16 @@ const ProtectedPasswordVault = () =>{
     const decodedToken = decodeToken(getAuthToken());
     if(decodedToken && decodedToken.id){
         return <PasswordVault/>
+    }
+    else{
+        return <Navigate to='/login' />
+    }
+}
+
+const ProtectedExpenseVault = () =>{
+    const decodedToken = decodeToken(getAuthToken());
+    if(decodedToken && decodedToken.id){
+        return <ExpenseVault/>
     }
     else{
         return <Navigate to='/login' />

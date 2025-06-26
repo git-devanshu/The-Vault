@@ -33,6 +33,7 @@ export function fetchSecureData(path, setData, setError) {
     .then(res =>{
         if(res.status === 200){
             setData(res.data);
+            console.log(res.data);
         }
     })
     .catch(err =>{

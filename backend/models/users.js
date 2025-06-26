@@ -11,6 +11,8 @@ const userSchema = new mongoose.Schema({
     notesList : [{type : mongoose.Schema.Types.ObjectId, ref : 'notes'}],
     taskList : [{type : mongoose.Schema.Types.ObjectId, ref : 'tasks'}],
     dailyList : [{type : mongoose.Schema.Types.ObjectId, ref : 'daily'}],
+    expenseList : [{type : mongoose.Schema.Types.ObjectId, ref : 'expense'}],
+    trackerList : {type : Array, default : ['Other']},
 });
 
 const Users = mongoose.model('users', userSchema, 'users');
