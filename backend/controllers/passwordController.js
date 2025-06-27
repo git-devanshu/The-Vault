@@ -157,7 +157,10 @@ const revealPassword = async(req, res) =>{
 // @route - GET /api/password
 const getAllPasswords = async(req, res) =>{
     try{
-        const user = await Users.findById(req.id).populate('passwordList');
+        const user = await Users.findById(req.id).populate({
+            path: 'passwordList',
+            options: {sort: { label : 1 }}
+        });
         if(!user){
             return res.status(404).json({ message : "User not found" });
         }

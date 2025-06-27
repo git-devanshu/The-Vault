@@ -58,18 +58,18 @@ export default function Home() {
                     <Heading color='blackAlpha.800' mt={4} fontFamily='body' fontSize={20} fontWeight={700}>Expenses <ArrowForwardIcon mt='-5px' h={5} w={5}/></Heading>
                     <Text color='blackAlpha.700' mr={3} fontFamily='body' fontSize={15} fontWeight={500}>Track all your expenses categorically.</Text>
                 </div>
-                {/* <div onClick={()=> navigateToVault('tasklist-not-build')} style={{height:'110px', width:'250px', backgroundColor:'rgb(97, 177, 226)', borderRadius:'15px', padding: '10px'}} className='card-mp'>            
+                {/* <div onClick={()=> navigateToVault('tasklist')} style={{height:'110px', width:'250px', backgroundColor:'rgb(97, 177, 226)', borderRadius:'15px', padding: '10px'}} className='card-mp'>            
                     <Heading color='blackAlpha.800' mt={4} fontFamily='body' fontSize={20} fontWeight={700}>Tasklist <ArrowForwardIcon mt='-5px' h={5} w={5}/></Heading>
                     <Text color='blackAlpha.700' mr={3} fontFamily='body' fontSize={15} fontWeight={500}>List all your secret tasks.</Text>
-                </div>
-                <div onClick={()=> navigateToVault('daily-not-build')} style={{height:'110px', width:'250px', backgroundColor:'rgba(255, 255, 255, 0.100)', borderRadius:'15px', boxShadow:'0 0 20px 10px rgb(210, 210, 210, 0.200) inset', padding: '10px'}} className='card-mp'>
+                </div> */}
+                {/* <div onClick={()=> navigateToVault('daily')} style={{height:'110px', width:'250px', backgroundColor:'rgba(255, 255, 255, 0.100)', borderRadius:'15px', boxShadow:'0 0 20px 10px rgb(210, 210, 210, 0.200) inset', padding: '10px'}} className='card-mp'>
                     <Heading color='blackAlpha.800' mt={4} fontFamily='body' fontSize={20} fontWeight={700}>Daily Notes <ArrowForwardIcon mt='-5px' h={5} w={5}/></Heading>
                     <Text color='blackAlpha.700' mr={3} fontFamily='body' fontSize={15} fontWeight={500}>Write a note on your special day.</Text>
-                </div>
-                <div onClick={()=> navigateToVault('notes-not-build')} style={{height:'110px', width:'250px', backgroundColor:'rgba(255, 255, 255, 0.100)', borderRadius:'15px', boxShadow:'0 0 20px 10px rgb(210, 210, 210, 0.200) inset', padding: '10px'}} className='card-mp'>
+                </div> */}
+                <div onClick={()=> navigateToVault('notes')} style={{height:'110px', width:'250px', backgroundColor:'rgba(255, 255, 255, 0.100)', borderRadius:'15px', boxShadow:'0 0 20px 10px rgb(210, 210, 210, 0.200) inset', padding: '10px'}} className='card-mp'>
                     <Heading color='blackAlpha.800' mt={4} fontFamily='body' fontSize={20} fontWeight={700}>Notebook <ArrowForwardIcon mt='-5px' h={5} w={5}/></Heading>
                     <Text color='blackAlpha.700' mr={3} fontFamily='body' fontSize={15} fontWeight={500}>Keep notes of your data securely.</Text>
-                </div> */}
+                </div>
             </div>
 
             {/* about section */}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import {getAuthToken, getBaseURL, getSecurityPin, removeSecurityPin} from '../utils/helperFunctions';
 import '../styles/Vault.css';
 import PinModal from '../components/PinModal';
@@ -28,7 +28,8 @@ export default function PasswordVault() {
     const [passwordId, setPasswordId] = useState('');
     const [passwordData, setPasswordData] = useState({});
 
-    const [isSortedAsc, setIsSortedAsc] = useState(true);
+    const [query, setQuery] = useState('');
+    const [sortDesc, setSortDesc] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
     const [showAddLabelPopup, setShowAddLabelPopup] = useState(false);
@@ -59,6 +60,14 @@ export default function PasswordVault() {
         fetchSecureData('/password', setData, setError);
         fetchSecureData('/password/label', setLabels, setError);
     }, [refresh]);
+
+    const filtered = useMemo(() => {
+        if(!query.trim()) return data;
+        const q = query.toLowerCase();
+        return data.filter(item =>
+            item.platform.toLowerCase().includes(q)
+        );
+    }, [data, query]);
 
     const removeLabel = (labelName) =>{
         if(!labelName || labelName.length === 0){
@@ -115,18 +124,7 @@ export default function PasswordVault() {
             setIsLoading(false);
         });
     }
-
-    const handleSort = () => {
-        const sortedData = [...data].sort((a, b) => {
-            const labelA = a.label?.toLowerCase() || '';
-            const labelB = b.label?.toLowerCase() || '';
-            return isSortedAsc ? labelA.localeCompare(labelB) : labelB.localeCompare(labelA);
-        });
-        setData(sortedData);
-        setIsSortedAsc(!isSortedAsc);
-    };    
-
-    
+  
     if(!securityPin){
         return <PinModal/>
     }
@@ -145,7 +143,6 @@ export default function PasswordVault() {
             <ButtonGroup mt={6}>
                 <Button onClick={()=> setShowAddPasswordPopup(true)} leftIcon={<PlusSquareIcon />}>Password</Button>
                 <Button onClick={()=> setShowAddLabelPopup(true)} variant='outline' color='white' _hover={{bgColor: 'transparent'}} leftIcon={<PlusSquareIcon />}>Label</Button>
-                <IconButton onClick={handleSort} icon={<FaSortAlphaDown/>}></IconButton>
             </ButtonGroup>
 
             <div className='vault-grid'>
@@ -166,11 +163,14 @@ export default function PasswordVault() {
 
                 <div className='grid-inner-right'>
                     <Text fontFamily='revert' fontSize='18px' mb={5} textAlign='center' fontWeight={500}>MY PASSWORDS</Text>
+
+                    <input className="login-input" value={query} onChange={(e)=> setQuery(e.target.value)} placeholder='Search Password' style={{marginRight: '15px'}}/>
+                    <IconButton onClick={()=> setSortDesc(!sortDesc)} icon={<FaSortAlphaDown/>}></IconButton>
                     
-                    {(!data || data.length === 0) && <Text color='#aaa' mt={8} textAlign='center'>You haven't added any passwords yet.</Text>}
+                    {(!filtered || filtered.length === 0) && <Text color='#aaa' mt={8} textAlign='center'>No Passwords Found.</Text>}
                     
-                    {data?.length > 0 && <div className='password-card-div'>
-                        {data.map((item, ind)=>{
+                    {filtered?.length > 0 && <div className='password-card-div'>
+                        {(sortDesc ? [...filtered].reverse() : filtered).map((item, ind)=>{
                             return(
                                 <div className='password-card' key={ind}>
                                     <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>

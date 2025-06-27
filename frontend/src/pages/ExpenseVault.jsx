@@ -177,7 +177,7 @@ export default function ExpenseVault() {
                     <Text fontFamily='revert' fontSize='18px' mb={2} textAlign='center' fontWeight={500}>MY EXPENSES</Text>
                     <Text fontFamily='revert' fontSize='18px' mb={5} textAlign='center' fontWeight={400} color='#2daaff'>{currentTracker}</Text>
                     <Stack direction='row' align='center' mb={3}>
-                        <Text fontFamily='revert' fontSize='18px' textAlign='center' fontWeight={400} color='#2daaff'>Spent - {totalExpense}</Text>
+                        <Text fontFamily='revert' fontSize='18px' textAlign='center' fontWeight={400} color='#2daaff'>Spent: {totalExpense}</Text>
                         <Spacer/>
                         <Button onClick={()=>{setShowAddExpensePopup(true)}} variant='outline' color='white' leftIcon={<PlusSquareIcon />}>Expense</Button>
                     </Stack>

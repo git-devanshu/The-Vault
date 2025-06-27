@@ -63,6 +63,10 @@ const removeExpense = async(req, res) =>{
         if(!removedExpense){
             return res.status(404).json({ message : "Expense not found" });
         }
+
+        user.expenseList = user.expenseList.filter(expId => expId != id);
+        await user.save();
+
         res.status(200).json({ message : "Expense removed" });
     }
     catch(error){
