@@ -5,9 +5,10 @@ import PinModal from '../components/PinModal';
 import Loading from '../components/Loading';
 import { fetchSecureData } from '../axios/axiosRequest';
 import { IconButton, Button, ButtonGroup, Heading, Spacer, Text, Wrap, WrapItem, Stack } from '@chakra-ui/react';
-import {PlusSquareIcon, ViewIcon} from '@chakra-ui/icons';
+import {EditIcon, PlusSquareIcon, ViewIcon} from '@chakra-ui/icons';
 import { FaSortAlphaDown } from 'react-icons/fa';
 import NotesPopup from '../components/NotesPopup';
+import ViewNotePopup from '../components/ViewNotePopup';
 
 export default function NotesVault() {
     const [securityPin, setSecurityPin] = useState(getSecurityPin());
@@ -22,6 +23,7 @@ export default function NotesVault() {
 
     const [showAddNotesPopup, setShowAddNotesPopup] = useState(false);
     const [showUpdateNotesPopup, setShowUpdateNotesPopup] = useState(false);
+    const [showViewNotesPopup, setShowViewNotesPopup] = useState(false);
 
     // for removing the security pin after exiting the module
     useEffect(()=>{
@@ -81,7 +83,10 @@ export default function NotesVault() {
                                 <Stack className='password-card' style={{width: '160px', minWidth: '160px', borderLeft: `8px solid ${note.categoryColor}`, height: '190px'}}>
                                     <Text fontSize='17px'>{note.title.slice(0, 55)}...</Text>
                                     <Spacer/>
-                                    <Button onClick={()=> {setCurrentNoteData(note); setShowUpdateNotesPopup(true)}} variant='outline' color='white' _hover={{bgColor: 'transparent'}} leftIcon={<ViewIcon />}>View Note</Button>
+                                    <ButtonGroup>
+                                        <IconButton onClick={()=> {setCurrentNoteData(note); setShowViewNotesPopup(true)}} icon={<ViewIcon />}></IconButton>
+                                        <IconButton onClick={()=> {setCurrentNoteData(note); setShowUpdateNotesPopup(true)}} icon={<EditIcon />} variant='outline' color='white' _hover={{bgColor: 'transparent'}}></IconButton>
+                                    </ButtonGroup>
                                 </Stack>
                             </WrapItem>
                         );
@@ -92,6 +97,7 @@ export default function NotesVault() {
             {/* Notes Popups */}
             {showAddNotesPopup && <NotesPopup creating={true} setShowPopup={setShowAddNotesPopup} setRefresh={setRefresh} refresh={refresh}/>}
             {showUpdateNotesPopup && <NotesPopup creating={false} data={currentNoteData} setRefresh={setRefresh} refresh={refresh} setShowPopup={setShowUpdateNotesPopup}/>}
+            {showViewNotesPopup && <ViewNotePopup data={currentNoteData} setShowPopup={setShowViewNotesPopup}/>}
         </div>
     );
 }

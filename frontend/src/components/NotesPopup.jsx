@@ -18,7 +18,20 @@ export default function NotesPopup({setShowPopup, creating, data, setRefresh, re
 
     const [showRemoveNotePopup, setShowRemoveNotePopup] = useState(false);
     
-    const basicColors = ['red', 'yellow', 'orange', 'blue', 'cyan', 'green', 'lime', 'gray', 'brown', 'black', 'white'];
+    const basicColors = [
+        '#ff0000', // red
+        '#ffff00', // yellow
+        '#ffa500', // orange
+        '#0000ff', // blue
+        '#00ffff', // cyan
+        '#008000', // green
+        '#00ff00', // lime
+        '#808080', // gray
+        '#a52a2a', // brown
+        '#000000', // black
+        '#ffffff', // white
+    ];
+    
     const customStyles = {
         default: {
             card: {
